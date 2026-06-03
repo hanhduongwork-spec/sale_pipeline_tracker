@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SalesTrack</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f1f5f9;
+      color: #475569;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid #e2e8f0;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      z-index: 40;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .sidebar-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: #6366f1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo-text .app-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    .sidebar-logo-text .app-tagline {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .nav-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .nav-item.active {
+      background: #eef2ff;
+      color: #6366f1;
+      font-weight: 600;
+    }
+
+    .nav-item.active i {
+      color: #6366f1;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 24px;
+      left: 16px;
+      right: 16px;
+    }
+
+    .sidebar-footer .version {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .sidebar-footer .course {
+      font-size: 11px;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+
+    /* ── Main area ── */
+    .main {
+      margin-left: 240px;
+      min-height: 100vh;
+      background: #f1f5f9;
+    }
+
+    /* ── Top header ── */
+    .topbar {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      height: 64px;
+      padding: 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .topbar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .date-chip {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* ── Content ── */
+    .content {
+      padding: 32px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+      animation: slideUp 0.25s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    /* ── Metric card ── */
+    .metric-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+      border-left: 4px solid;
+      animation: slideUp 0.25s ease;
+    }
+
+    .metric-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .metric-sub {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-prospecting  { background: #f1f5f9; color: #475569; }
+    .badge-qualification { background: #eff6ff; color: #3b82f6; }
+    .badge-proposal     { background: #fffbeb; color: #d97706; }
+    .badge-negotiation  { background: #fff7ed; color: #ea580c; }
+    .badge-won          { background: #f0fdf4; color: #16a34a; }
+    .badge-lost         { background: #fef2f2; color: #dc2626; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      background: #6366f1;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-primary:hover {
+      background: #4f46e5;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .btn-danger {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+    }
+
+    /* ── Form inputs ── */
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #0f172a;
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .form-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      animation: slideUp 0.3s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .toast-success {
+      background: #f0fdf4;
+      color: #15803d;
+      border-left: 4px solid #22c55e;
+    }
+
+    .toast-error {
+      background: #fef2f2;
+      color: #dc2626;
+      border-left: 4px solid #ef4444;
+    }
+
+    .toast-info {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left: 4px solid #3b82f6;
+    }
+
+    /* ── Animations ── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px;
+      min-height: 60vh;
+    }
+
+    .empty-state-icon {
+      width: 80px;
+      height: 80px;
+      background: #6366f1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: #ffffff;
+      margin-bottom: 24px;
+    }
+
+    .empty-state-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 12px;
+    }
+
+    .empty-state-subtitle {
+      font-size: 15px;
+      color: #64748b;
+      max-width: 360px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">&#9889;</div>
+      <div class="sidebar-logo-text">
+        <div class="app-name">SalesTrack</div>
+        <div class="app-tagline">Sales Pipeline</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#" onclick="navigateTo('dashboard', this)">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+      </a>
+      <a class="nav-item" href="#" onclick="navigateTo('leads', this)">
+        <i class="fa-solid fa-users"></i>
+        Leads
+      </a>
+      <a class="nav-item" href="#" onclick="navigateTo('pipeline', this)">
+        <i class="fa-solid fa-diagram-project"></i>
+        Pipeline
+      </a>
+      <a class="nav-item" href="#" onclick="navigateTo('forecast', this)">
+        <i class="fa-solid fa-chart-line"></i>
+        Forecast
+      </a>
+      <a class="nav-item" href="#" onclick="navigateTo('activities', this)">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        Activities
+      </a>
+      <a class="nav-item" href="#" onclick="navigateTo('ai-email', this)">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        AI Email
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="version">SalesTrack v1.0</div>
+      <div class="course">Modern Topics in Digital Business</div>
+    </div>
+  </aside>
+
+  <!-- ── Main area ── -->
+  <div class="main">
+
+    <!-- Top header -->
+    <header class="topbar">
+      <span class="topbar-title" id="page-title">Dashboard</span>
+      <span class="date-chip" id="date-chip"></span>
+    </header>
+
+    <!-- Content area -->
+    <main class="content" id="main-content">
+
+      <!-- Empty state (default) -->
+      <div class="empty-state">
+        <div class="empty-state-icon">&#9889;</div>
+        <div class="empty-state-title">Welcome to SalesTrack</div>
+        <p class="empty-state-subtitle">
+          Your sales pipeline manager.
+          Select a page from the sidebar to get started.
+        </p>
+        <button class="btn-primary" onclick="loadSampleData()">Load Sample Data</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!--
+    Lead object:
+    {
+      id: "lead_" + Date.now(),
+      name: "Nguyen Van A",
+      company: "ABC Corp",
+      email: "a@abc.com",
+      phone: "0901234567",
+      dealSize: 50000,
+      source: "Website|Referral|Event|Cold Call",
+      stage: "Prospecting|Qualification|Proposal|Negotiation|Closed Won|Closed Lost",
+      probability: 10,
+      notes: "",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+
+    Activity object:
+    {
+      id: "act_" + Date.now(),
+      type: "Call|Email|Meeting|Note",
+      leadId: "lead_xxx",
+      leadName: "Nguyen Van A",
+      company: "ABC Corp",
+      date: new Date().toISOString(),
+      duration: 30,
+      notes: "",
+      nextAction: "",
+      createdAt: new Date().toISOString()
+    }
+  -->
+
+  <script>
+    // ── Storage helpers ──
+    function getLeads() {
+      return JSON.parse(localStorage.getItem('salestrack_leads')) || [];
+    }
+    function saveLeads(data) {
+      localStorage.setItem('salestrack_leads', JSON.stringify(data));
+    }
+    function getActivities() {
+      return JSON.parse(localStorage.getItem('salestrack_activities')) || [];
+    }
+    function saveActivities(data) {
+      localStorage.setItem('salestrack_activities', JSON.stringify(data));
+    }
+    function getSettings() {
+      return JSON.parse(localStorage.getItem('salestrack_settings')) || {};
+    }
+    function saveSettings(data) {
+      localStorage.setItem('salestrack_settings', JSON.stringify(data));
+    }
+
+    // ── Format currency ──
+    function formatCurrency(n) {
+      if (!n) return '$0';
+      return '$' + Number(n).toLocaleString('en-US');
+    }
+
+    // ── Time ago ──
+    function timeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 60) return mins + ' minutes ago';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + ' hours ago';
+      const days = Math.floor(hrs / 24);
+      if (days < 7) return days + ' days ago';
+      return new Date(dateStr).toLocaleDateString('en-US',
+        { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // ── Toast notification ──
+    function showToast(message, type = 'info') {
+      const colors = {
+        success: { bg: '#f0fdf4', color: '#15803d', border: '#22c55e', icon: 'fa-circle-check' },
+        error:   { bg: '#fef2f2', color: '#dc2626', border: '#ef4444', icon: 'fa-circle-xmark' },
+        info:    { bg: '#eff6ff', color: '#1d4ed8', border: '#3b82f6', icon: 'fa-circle-info' }
+      };
+      const c = colors[type] || colors.info;
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position:fixed; bottom:24px; right:24px; z-index:1000;
+        background:${c.bg}; color:${c.color};
+        border-left:4px solid ${c.border};
+        padding:14px 20px; border-radius:12px;
+        font-size:14px; font-weight:500;
+        min-width:280px; display:flex;
+        align-items:center; gap:10px;
+        box-shadow:0 8px 24px rgba(0,0,0,0.12);
+        animation:slideUp 0.3s ease;
+        font-family:'Plus Jakarta Sans',sans-serif;
+      `;
+      toast.innerHTML = `<i class="fa-solid ${c.icon}"></i>${message}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ── Default probability by stage ──
+    function getDefaultProbability(stage) {
+      const map = {
+        'Prospecting': 10, 'Qualification': 25,
+        'Proposal': 50,    'Negotiation': 75,
+        'Closed Won': 100, 'Closed Lost': 0
+      };
+      return map[stage] || 0;
+    }
+
+    // ── Get badge class by stage ──
+    function getStageBadge(stage) {
+      const map = {
+        'Prospecting':  'badge-prospecting',
+        'Qualification':'badge-qualification',
+        'Proposal':     'badge-proposal',
+        'Negotiation':  'badge-negotiation',
+        'Closed Won':   'badge-won',
+        'Closed Lost':  'badge-lost'
+      };
+      return map[stage] || 'badge-prospecting';
+    }
+
+    // ── Next stage ──
+    function getNextStage(stage) {
+      const order = ['Prospecting', 'Qualification', 'Proposal',
+                     'Negotiation', 'Closed Won'];
+      const idx = order.indexOf(stage);
+      return idx < order.length - 1 ? order[idx + 1] : null;
+    }
+
+    // ── Navigation helper ──
+    function navigateTo(page, el) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      if (el) el.classList.add('active');
+      const titles = {
+        dashboard:   'Dashboard',
+        leads:       'Leads',
+        pipeline:    'Pipeline',
+        forecast:    'Forecast',
+        activities:  'Activities',
+        'ai-email':  'AI Email'
+      };
+      document.getElementById('page-title').textContent = titles[page] || 'SalesTrack';
+    }
+
+    // ── Date chip ──
+    (function setDateChip() {
+      const now = new Date();
+      const formatted = now.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+      });
+      document.getElementById('date-chip').textContent = formatted;
+    })();
+  </script>
+
+  <!-- sample_data.js is expected to define loadSampleData() -->
+  <script src="sample_data.js"></script>
+
+</body>
+</html>
