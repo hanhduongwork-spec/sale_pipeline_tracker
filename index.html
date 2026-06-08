@@ -1,16 +1,265 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SalesTrack HTML Template</title>
-    <meta property="og:image" content="https://bolt.new/static/og_default.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesTrack CRM - Commercial Deals Pipeline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-  <body>
-    <div id="app"></div>
+<body class="overflow-x-hidden" style="font-family:'Plus Jakarta Sans',sans-serif;background:#f1f5f9;color:#475569;min-height:100vh;">
+
+    <!-- Top Navigation Bar -->
+    <div class="w-full bg-[#2e3192] text-white px-6 py-3 flex justify-between items-center z-30 relative">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-xl"></i>
+            <span class="text-lg font-bold tracking-tight">SalesTrack CRM</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center bg-[#1e2061] px-3 py-1.5 rounded-full text-xs font-medium">
+                <span class="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
+                Sales Rep: <strong class="ml-1">Duy Nguyen</strong>
+            </span>
+        </div>
+    </div>
+
+    <div class="flex min-h-[calc(100vh-52px)]">
+        <!-- Sidebar -->
+        <aside class="w-[240px] bg-white border-r border-[#e2e8f0] p-6 flex flex-col justify-between fixed top-[52px] bottom-0 left-0 z-20">
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold">&#9889;</div>
+                    <div>
+                        <div class="text-[18px] font-bold text-[#0f172a] leading-none">SalesTrack</div>
+                        <div class="text-[12px] text-[#94a3b8] font-medium mt-0.5">Sales Pipeline</div>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-[#94a3b8] mb-2 px-3.5">Workspace Navigation</p>
+                    <button onclick="changeMenu('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-[14px] py-[10px] rounded-[10px] text-[14px] font-medium text-[#64748b] transition-colors hover:bg-[#f8fafc] hover:text-[#0f172a]">
+                        <i class="fa-solid fa-house text-[18px] w-5"></i><span>Dashboard Overview</span>
+                    </button>
+                    <button onclick="changeMenu('leads')" id="nav-leads" class="nav-btn w-full flex items-center gap-3 px-[14px] py-[10px] rounded-[10px] text-[14px] font-medium text-[#64748b] transition-colors hover:bg-[#f8fafc] hover:text-[#0f172a]">
+                        <i class="fa-solid fa-users text-[18px] w-5"></i><span>My Leads Directory</span>
+                    </button>
+                    <button onclick="changeMenu('pipeline')" id="nav-pipeline" class="nav-btn w-full flex items-center gap-3 px-[14px] py-[10px] rounded-[10px] text-[14px] font-semibold bg-[#eef2ff] text-[#6366f1]">
+                        <i class="fa-solid fa-diagram-project text-[18px] w-5 text-[#6366f1]"></i><span>Deal Management</span>
+                    </button>
+                    <button onclick="changeMenu('ai_email')" id="nav-ai_email" class="nav-btn w-full flex items-center gap-3 px-[14px] py-[10px] rounded-[10px] text-[14px] font-medium text-[#64748b] transition-colors hover:bg-[#f8fafc] hover:text-[#0f172a]">
+                        <i class="fa-solid fa-wand-magic-sparkles text-[18px] w-5"></i><span>AI Email Assistant</span>
+                    </button>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-[#e2e8f0]">
+                <div class="text-[12px] text-[#94a3b8] font-medium">SalesTrack v1.0</div>
+                <div class="text-[11px] text-[#cbd5e1] font-medium mt-0.5">Modern Topics in Digital Business</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-[240px] flex-1 bg-[#f1f5f9] flex flex-col min-h-full w-[calc(100%-240px)]">
+            <header class="h-16 bg-white border-b border-[#e2e8f0] px-8 flex justify-between items-center shrink-0">
+                <div id="page-title" class="text-[20px] font-bold text-[#0f172a]">Commercial Deals Pipeline</div>
+                <div>
+                    <span class="bg-[#f8fafc] border border-[#e2e8f0] rounded-full px-3.5 py-1.5 text-[13px] text-[#64748b] font-medium">
+                        <i class="fa-regular fa-calendar mr-1.5"></i><span id="current-date-chip">June 8, 2026</span>
+                    </span>
+                </div>
+            </header>
+
+            <div id="main-content-area" class="p-8 flex-1 flex flex-col">
+
+                <!-- Empty State -->
+                <div id="empty-state-view" class="flex-1 flex flex-col items-center justify-center text-center py-12">
+                    <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center text-[#6366f1] text-3xl mb-4 shadow-sm border border-indigo-100">&#9889;</div>
+                    <h2 class="text-[24px] font-bold text-[#0f172a] mb-2">Welcome to SalesTrack</h2>
+                    <p class="text-[15px] text-[#64748b] max-w-sm mb-6 leading-relaxed">Your enterprise grade sales pipeline manager. Click below to load your baseline live deals tracker environment.</p>
+                    <button onclick="loadSampleData()" class="bg-[#6366f1] text-white px-5 py-2.5 rounded-[10px] font-semibold text-[14px] hover:bg-[#4f46e5] transition-all inline-flex items-center gap-2"><i class="fa-solid fa-database"></i> Load Sample Data</button>
+                </div>
+
+                <!-- Active Pipeline View -->
+                <div id="pipeline-active-view" class="hidden flex-1 flex flex-col space-y-6">
+
+                    <!-- Controls Row -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <p class="text-[14px] text-[#64748b] max-w-xl">Track pipeline stages, adjust confidence weights, and manage corporate deal values dynamically across your funnel.</p>
+                        <div class="flex items-center gap-3 self-end md:self-auto">
+                            <div class="flex bg-white border border-[#e2e8f0] rounded-lg p-1 text-[#64748b]">
+                                <button onclick="window.print()" class="p-2 hover:text-[#0f172a] transition-colors" title="Print"><i class="fa-solid fa-print"></i></button>
+                                <button onclick="exportCSV()" class="p-2 hover:text-[#0f172a] transition-colors" title="Export CSV"><i class="fa-solid fa-file-csv text-lg"></i></button>
+                            </div>
+                            <div class="bg-[#e2e8f0] p-1 rounded-xl flex items-center gap-1 font-medium text-sm">
+                                <button id="toggle-table-btn" onclick="switchView('table')" class="view-btn active px-3 py-1.5 rounded-lg text-[#475569] flex items-center gap-2 transition-all"><i class="fa-solid fa-table-list"></i> Table View</button>
+                                <button id="toggle-kanban-btn" onclick="switchView('kanban')" class="view-btn px-3 py-1.5 rounded-lg text-[#64748b] flex items-center gap-2 transition-all"><i class="fa-solid fa-grip"></i> Kanban Board</button>
+                            </div>
+                            <button onclick="openCreateModal()" class="bg-[#6366f1] text-white px-5 py-2.5 rounded-[10px] font-semibold text-[14px] hover:bg-[#4f46e5] transition-all inline-flex items-center gap-2"><i class="fa-solid fa-plus"></i> Create Deal</button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#e2e8f0] border-l-4 border-l-[#6366f1] hover:shadow-md transition-all">
+                            <div class="text-[12px] font-semibold uppercase tracking-wider text-[#94a3b8]">Gross Pipeline Asset Value</div>
+                            <div id="kpi-gross" class="text-3xl font-bold text-[#6366f1] mt-1">$0</div>
+                            <div class="text-[13px] text-[#64748b] mt-1">Sum of all deal values</div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#e2e8f0] border-l-4 border-l-[#3b82f6] hover:shadow-md transition-all">
+                            <div class="text-[12px] font-semibold uppercase tracking-wider text-[#94a3b8]">Weighted Forecast / Total Expected Value</div>
+                            <div id="kpi-weighted" class="text-3xl font-bold text-[#3b82f6] mt-1">$0</div>
+                            <div class="text-[13px] text-[#64748b] mt-1">Sum of all Expected Values (Deal Value x Confidence %)</div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#e2e8f0] border-l-4 border-l-[#10b981] hover:shadow-md transition-all">
+                            <div class="text-[12px] font-semibold uppercase tracking-wider text-[#94a3b8]">Current Conversion Win-Rate</div>
+                            <div id="kpi-winrate" class="text-3xl font-bold text-[#10b981] mt-1">0%</div>
+                            <div class="text-[13px] text-[#64748b] mt-1">Ratio of Won vs Closed lifecycle assets</div>
+                        </div>
+                    </div>
+
+                    <!-- Search / Filter / Sort -->
+                    <div class="bg-white border border-[#e2e8f0] p-4 rounded-xl flex flex-col sm:flex-row gap-3 items-center">
+                        <div class="relative flex-1 w-full">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94a3b8]"></i>
+                            <input type="text" id="search-bar" oninput="refreshView()" placeholder="Search Deal, Company, Account..." class="w-full pl-10 pr-4 py-2.5 border-[1.5px] border-[#e2e8f0] rounded-[10px] text-[13px] text-[#0f172a] outline-none focus:border-[#6366f1] focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] transition-all">
+                        </div>
+                        <select id="filter-stage" onchange="refreshView()" class="w-full sm:w-48 py-2.5 px-3 border-[1.5px] border-[#e2e8f0] rounded-[10px] text-[13px] text-[#0f172a] outline-none focus:border-[#6366f1] transition-all">
+                            <option value="All">All Stages</option>
+                            <option value="Prospecting">Prospecting</option>
+                            <option value="Qualification">Qualification</option>
+                            <option value="Proposal">Proposal</option>
+                            <option value="Negotiation">Negotiation</option>
+                            <option value="Closed Won">Closed Won</option>
+                            <option value="Closed Lost">Closed Lost</option>
+                        </select>
+                        <select id="sort-order" onchange="refreshView()" class="w-full sm:w-48 py-2.5 px-3 border-[1.5px] border-[#e2e8f0] rounded-[10px] text-[13px] text-[#0f172a] outline-none focus:border-[#6366f1] transition-all">
+                            <option value="Default">Default Sort</option>
+                            <option value="ValueHighLow">Deal Size: High to Low</option>
+                            <option value="ValueLowHigh">Deal Size: Low to High</option>
+                            <option value="Alpha">Alphabetical Order</option>
+                        </select>
+                    </div>
+
+                    <!-- Table View -->
+                    <div id="table-container" class="bg-white border border-[#e2e8f0] rounded-2xl overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-[#f8fafc] border-b border-[#e2e8f0] text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                                        <th class="px-5 py-4">Deal Details / Account</th>
+                                        <th class="px-5 py-4">Deal Value</th>
+                                        <th class="px-5 py-4">Pipeline Stage</th>
+                                        <th class="px-5 py-4 text-center">Confidence Level</th>
+                                        <th class="px-5 py-4">Expected Value</th>
+                                        <th class="px-5 py-4 text-center">Last Activity</th>
+                                        <th class="px-5 py-4 text-right">Last Interacted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deals-tbody" class="divide-y divide-[#e2e8f0] text-sm text-[#475569]"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Kanban View -->
+                    <div id="kanban-container" class="hidden overflow-x-auto pb-4 -mx-2 flex gap-4 items-start min-h-[500px]"></div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Deal Modal -->
+    <div id="deal-modal" class="hidden fixed inset-0 bg-[rgba(15,23,42,0.4)] backdrop-blur-[4px] z-50 flex items-center justify-center">
+        <div class="bg-white rounded-[20px] p-8 max-w-[520px] w-[90%] shadow-[0_20px_60px_rgba(0,0,0,0.15)]" style="animation:fadeIn .2s ease">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="text-xl font-bold text-[#0f172a]">Create Deal</h3>
+                <button onclick="closeModal()" class="text-[#94a3b8] hover:text-[#0f172a] text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="deal-form" onsubmit="saveDeal(event)" class="space-y-4">
+                <input type="hidden" id="f-id">
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Deal Name *</label>
+                    <input type="text" id="f-name" required placeholder="e.g. AeroSpace Cloud Server Suite" class="form-ctrl">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Client Company *</label>
+                        <input type="text" id="f-company" required placeholder="e.g. AeroSpace Dynamics" class="form-ctrl">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Deal Value ($) *</label>
+                        <input type="number" id="f-value" required placeholder="85000" class="form-ctrl">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Pipeline Stage</label>
+                        <select id="f-stage" onchange="syncConfidence()" class="form-ctrl">
+                            <option value="Prospecting">Prospecting</option>
+                            <option value="Qualification">Qualification</option>
+                            <option value="Proposal">Proposal</option>
+                            <option value="Negotiation">Negotiation</option>
+                            <option value="Closed Won">Closed Won</option>
+                            <option value="Closed Lost">Closed Lost</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Confidence Level (%)</label>
+                        <input type="number" id="f-confidence" min="0" max="100" class="form-ctrl">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Source</label>
+                        <select id="f-source" class="form-ctrl">
+                            <option value="Website">Website Inbound</option>
+                            <option value="Referral">Partner Referral</option>
+                            <option value="Event">Corporate Event</option>
+                            <option value="Cold Call">Cold Call Outreach</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Account Handler</label>
+                        <input type="text" readonly value="Duy Nguyen" class="form-ctrl bg-[#f8fafc] text-slate-400">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1.5">Notes</label>
+                    <textarea id="f-notes" rows="2" placeholder="Deal health, requirements, next actions..." class="form-ctrl resize-none"></textarea>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                    <button type="button" id="f-delete" onclick="deleteDeal()" class="hidden bg-[#fef2f2] text-[#dc2626] border border-[#fecaca] px-4 py-2.5 rounded-[10px] font-semibold text-[14px] hover:bg-[#fee2e2] transition-all inline-flex items-center gap-1"><i class="fa-solid fa-trash-can"></i> Delete Deal</button>
+                    <div class="flex items-center gap-3 ml-auto">
+                        <button type="button" onclick="closeModal()" class="bg-white text-[#475569] border border-[#e2e8f0] px-5 py-2.5 rounded-[10px] font-semibold text-[14px] hover:bg-[#f8fafc] transition-all">Cancel</button>
+                        <button type="submit" class="bg-[#6366f1] text-white px-5 py-2.5 rounded-[10px] font-semibold text-[14px] hover:bg-[#4f46e5] transition-all">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[999] flex flex-col gap-2"></div>
+
+    <style>
+        .form-ctrl { width:100%; padding:10px 14px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:14px; color:#0f172a; background:#fff; outline:none; transition:border .15s,box-shadow .15s; font-family:'Plus Jakarta Sans',sans-serif; }
+        .form-ctrl:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .form-ctrl::placeholder { color:#94a3b8; }
+        .view-btn.active { background-color:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+        @keyframes fadeIn { from{opacity:0;transform:scale(0.97)} to{opacity:1;transform:scale(1)} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        .badge { display:inline-block; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; }
+        .badge-prospecting  { background:#f1f5f9; color:#475569; }
+        .badge-qualification { background:#eff6ff; color:#3b82f6; }
+        .badge-proposal     { background:#fffbeb; color:#d97706; }
+        .badge-negotiation  { background:#fff7ed; color:#ea580c; }
+        .badge-won          { background:#f0fdf4; color:#16a34a; }
+        .badge-lost         { background:#fef2f2; color:#dc2626; }
+        .kanban-scroll::-webkit-scrollbar { height:8px; }
+        .kanban-scroll::-webkit-scrollbar-track { background:#f1f5f9; }
+        .kanban-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+    </style>
+
     <script type="module" src="/main.js"></script>
-  </body>
+</body>
 </html>
